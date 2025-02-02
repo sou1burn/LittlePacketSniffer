@@ -1,0 +1,5 @@
+/home/volodya/projects/infotecs_rd/build/CMakeFiles/SNIFFER.dir
+/home/volodya/projects/infotecs_rd/build/CMakeFiles/HANDLERS.dir
+/home/volodya/projects/infotecs_rd/build/CMakeFiles/main.dir
+/home/volodya/projects/infotecs_rd/build/CMakeFiles/edit_cache.dir
+/home/volodya/projects/infotecs_rd/build/CMakeFiles/rebuild_cache.dir
