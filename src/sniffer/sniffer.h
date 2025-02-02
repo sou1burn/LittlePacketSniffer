@@ -9,6 +9,7 @@
 
 namespace sniffer 
 {
+    //not sure about byte
 using byte = uint8_t;
 
 struct Packet 
