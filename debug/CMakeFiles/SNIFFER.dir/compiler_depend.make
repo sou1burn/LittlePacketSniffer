@@ -266,8 +266,11 @@ CMakeFiles/SNIFFER.dir/src/sniffer/sniffer.cpp.o: ../src/sniffer/sniffer.cpp \
   /usr/include/linux/types.h \
   /usr/include/x86_64-linux-gnu/asm/types.h \
   /usr/include/asm-generic/types.h \
-  /usr/include/asm-generic/int-ll64.h
+  /usr/include/asm-generic/int-ll64.h \
+  ../src/handlers/handlers.h
 
+
+../src/handlers/handlers.h:
 
 /usr/include/asm-generic/int-ll64.h:
 

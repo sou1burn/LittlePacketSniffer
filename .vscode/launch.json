@@ -3,9 +3,9 @@
     "configurations": [
         {
             "name": "Debug",
-            "type": "cppgdb",
+            "type": "gdb",
             "request": "launch",
-            "target": "./debug/bin/main",
+            "target": "./debug/main",
             "cwd": "${workspaceRoot}",
             "preLaunchTask": "build"
         }

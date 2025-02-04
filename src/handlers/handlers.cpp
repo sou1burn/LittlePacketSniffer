@@ -28,14 +28,12 @@ void ProcessingUnit::stopProcessing()
 void ProcessingUnit::processPacket(const Packet &packet)
 {
     struct ether_header *ethernetHeader = (struct ether_header *) packet.data.data();
-    struct ip *ipHeader = (struct ip *)(packet.data.data() + sizeof(ethernetHeader));
-
-    if (ipHeader->ip_p == IPPROTO_TCP) {
-        struct tcphdr * tcpHeader = (struct tcphdr*)(packet.data.data() + sizeof(ethernetHeader) + (ipHeader->ip_hl * 4));
+    struct ip *ipHeader = (struct ip *)(packet.data.data() + sizeof(struct ether_header));
+    if (ipHeader->ip_p == IPPROTO_TCP || ipHeader->ip_p == IPPROTO_UDP) {
+        struct tcphdr * tcpHeader = (struct tcphdr*)(packet.data.data() + sizeof(struct ether_header) + (ipHeader->ip_hl * 4));
 
         uint16_t srcPort = ntohs(tcpHeader->th_sport);
         uint16_t dstPort = ntohs(tcpHeader->th_dport);
-
         if (srcPort == 21 || dstPort == 21) {
             {
                 std::lock_guard<std::mutex> lock(m1);
@@ -60,12 +58,13 @@ void ProcessingUnit::processPacket(const Packet &packet)
                 std::time_t timeAtTheMoment = std::chrono::system_clock::to_time_t(stamp);
                 std::cout << "Обработчик 3: {" << std::ctime(&timeAtTheMoment) << "} пакет {" << IPPROTO_UDP << srcPort << "->" << dstPort << "} инициирует соединение\n";
                 return;
-            } 
-            {
-                std::lock_guard<std::mutex> lock(m3);
-                q3.push(packet);
+            } else { 
+                {
+                    std::lock_guard<std::mutex> lock(m3);
+                    q3.push(packet);
+                }
+                cv3.notify_one();
             }
-            cv3.notify_one();
         }
     }
 }
@@ -82,15 +81,15 @@ void ProcessingUnit::handler1()
     while (isRunning) {
         std::unique_lock<std::mutex> lock(m1);
         cv1.wait(lock, [this] {
-            return !q1.empty() || isRunning;
+            return !q1.empty() || !isRunning;
         });
         while (!q1.empty()) {
-            std::cout << "hello from handler1";
+           // std::cout << "hello from handler1\n";
             Packet pkt = q1.front();
             q1.pop();
             lock.unlock();
             out.write(reinterpret_cast<const char *>(&pkt.header), sizeof(pkt.header));
-            out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
+            out.write(reinterpret_cast<const char *>(pkt.data.data()), pkt.data.size());
 
             std::cout << "FTP command handled\n";
             lock.lock();
@@ -112,15 +111,15 @@ void ProcessingUnit::handler2()
     while (isRunning) {
         std::unique_lock<std::mutex> lock(m2);
         cv2.wait(lock, [this] {
-            return !q2.empty() || isRunning;
+            return !q2.empty() || !isRunning;
         });
         while (!q2.empty()) {
-            std::cout << "hello from handler2";
+           // std::cout << "hello from handler2\n";
             Packet pkt = q2.front();
             q2.pop();
             lock.unlock();
             out.write(reinterpret_cast<const char *>(&pkt.header), sizeof(pkt.header));
-            out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
+            out.write(reinterpret_cast<const char *>(pkt.data.data()), pkt.data.size());
             
             std::cout << "FTP data handled\n";
             lock.lock();
@@ -142,15 +141,15 @@ void ProcessingUnit::handler3()
     while (isRunning) {
         std::unique_lock<std::mutex> lock(m3);
         cv3.wait(lock, [this] {
-            return !q3.empty() || isRunning;
+            return !q3.empty() || !isRunning;
         });
         while (!q3.empty()) {
-            std::cout << "hello from handler3";
+           // std::cout << "hello from handler3\n";
             Packet pkt = q3.front();
             q3.pop();
             lock.unlock();
             out.write(reinterpret_cast<const char *>(&pkt.header), sizeof(pkt.header));
-            out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
+            out.write(reinterpret_cast<const char *>(pkt.data.data()), pkt.data.size());
             
             std::cout <<"Something other handled\n";
             lock.lock();

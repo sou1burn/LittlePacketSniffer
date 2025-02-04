@@ -1,10 +1,11 @@
 #include "sniffer.h"
+#include "handlers.h"
 namespace sniffer
 {
 
-// Sniffer::Sniffer(const std::string &interface, const ProcessingUnit &processor) : m_interface (interface), m_processor (processor) {}
+Sniffer::Sniffer(const std::string &interface, ProcessingUnit &processor) : m_interface (interface), m_processor (processor) {}
 
-Sniffer::Sniffer(const std::string &interface) : m_interface (interface) {}
+//Sniffer::Sniffer(const std::string &interface) : m_interface (interface) {}
 
 void Sniffer::startSniffing()
 {
@@ -62,10 +63,14 @@ void Sniffer::packetHandler(u_char *packetData, const pcap_pkthdr *header, const
     if (ntohs(ethernetHeader->ether_type) != ETHERTYPE_IP) {
         return;
     }
-    
     struct ip *ipHeader = (struct ip *)(packet + sizeof(struct ether_header));
     std::cout << "Source IP: " << inet_ntoa(ipHeader->ip_src) 
               << " -> Destination IP: " << inet_ntoa(ipHeader->ip_dst) << "\n";
+
+    struct tcphdr *tcpHeader = (struct tcphdr *)(packet + sizeof(struct ether_header) + (ipHeader->ip_hl * 4));
+
+    uint16_t srcPort = ntohs(tcpHeader->th_sport);
+    uint16_t dstPort = ntohs(tcpHeader->th_dport);
 
     if (ipHeader->ip_p == IPPROTO_TCP) {
         struct tcphdr *tcpHeader = (struct tcphdr *)(packet + sizeof(struct ether_header) + (ipHeader->ip_hl * 4));
@@ -75,10 +80,15 @@ void Sniffer::packetHandler(u_char *packetData, const pcap_pkthdr *header, const
         struct udphdr *udpHeader = (struct udphdr *)(packet + sizeof(struct ether_header) + (ipHeader->ip_hl * 4));
         std::cout << "Protocol: UDP | Source Port: " << ntohs(udpHeader->uh_sport)
                   << " -> Destination Port: " << ntohs(udpHeader->uh_dport) << "\n";
-    }  else {
+    } else if (srcPort == 21 || dstPort == 21) {
+        std::cout << "FTP Protocol detected (Command Channel) - Port 21\n";
+    } else if (srcPort == 20 || dstPort == 20 || srcPort > 1023 || dstPort > 1023) {
+        std::cout << "FTP Protocol detected (Data Channel) - Port 20 or Passive Mode\n";
+    } else {
         std::cout << "Protocol: " << (int)ipHeader->ip_p << " (не TCP и не UDP)\n";
     }
 
-    
+    sniffer->m_processor.processPacket(pkt);
+
 }
 } //namespace sniffer

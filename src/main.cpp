@@ -26,9 +26,9 @@ int main(int argc, char** argv) {
     }
 
     sniffer::ProcessingUnit processor;
-    sniffer::Sniffer sniffer(devs[0].name);
+    sniffer::Sniffer sniffer(argv[1], processor);
     processor.startProcessing();
-    std::thread sniffingThread([&sniffer, &processor]() {
+    std::thread sniffingThread([&sniffer/*, &processor*/]() {
         sniffer.startSniffing();
     });
     

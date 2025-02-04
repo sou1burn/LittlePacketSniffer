@@ -22,8 +22,8 @@ namespace sniffer
     //not sure about byte, might need to use u_char
 using byte = uint8_t;
 
-// class ProcessingUnit;
-//     sniffer->m_processor->processPacket(packet);
+class ProcessingUnit;
+
 struct Packet 
 {
     const pcap_pkthdr *header;
@@ -33,7 +33,7 @@ struct Packet
 class Sniffer 
 {
     public:
-        explicit Sniffer(const std::string &m_interface /*, const ProcessingUnit &m_processor*/);
+        explicit Sniffer(const std::string &m_interface, ProcessingUnit &m_processor);
         ~Sniffer() = default;
         void startSniffing();
         void endSniffing();
@@ -47,7 +47,7 @@ class Sniffer
         bool m_isRunning = false;
         pcap_t *m_handle = nullptr;
         char m_errbuf[PCAP_BUF_SIZE];
-        // ProcessingUnit &m_processor;
+        ProcessingUnit &m_processor;
 };
 
 } //namespace sniffer
