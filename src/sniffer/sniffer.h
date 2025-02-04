@@ -9,7 +9,7 @@
 
 namespace sniffer 
 {
-    //not sure about byte
+    //not sure about byte, might need to use u_char
 using byte = uint8_t;
 
 struct Packet 
@@ -26,6 +26,7 @@ class Sniffer
         void startSniffing();
         void endSniffing();
         void writePacketToFile(const Packet &packet, const std::string &path);
+
     private:
         static void packetHandler(u_char *userData, const pcap_pkthdr *pkthdr, const u_char *packet);
         std::vector<Packet> m_d;

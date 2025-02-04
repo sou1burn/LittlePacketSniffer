@@ -258,8 +258,15 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/c++/11/ext/concurrence.h \
   /usr/include/c++/11/thread \
   /usr/include/c++/11/bits/std_thread.h \
-  /usr/include/c++/11/bits/this_thread_sleep.h
+  /usr/include/c++/11/bits/this_thread_sleep.h \
+  /usr/include/netinet/ip.h \
+  /usr/include/netinet/tcp.h \
+  /usr/include/netinet/udp.h
 
+
+/usr/include/netinet/udp.h:
+
+/usr/include/netinet/ip.h:
 
 /usr/include/c++/11/bits/stl_pair.h:
 
@@ -318,6 +325,8 @@ CMakeFiles/main.dir/src/main.cpp.o: ../src/main.cpp \
 /usr/include/c++/11/new:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
+
+/usr/include/netinet/tcp.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 

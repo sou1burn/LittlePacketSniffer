@@ -7,6 +7,8 @@
 #include <netinet/tcp.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
+#include <ctime>
+#include <chrono>
 
 namespace sniffer
 {

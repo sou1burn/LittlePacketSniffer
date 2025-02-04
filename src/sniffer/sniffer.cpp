@@ -13,7 +13,7 @@ void Sniffer::startSniffing()
         std::cerr << "unable to open device\n" << m_errbuf;
         return;
     }
-    std::cout << "Started sniffing on interface: " << m_interface;
+    std::cout << "Started sniffing on interface: " << m_interface << "\n";
 
     m_isRunning = true;
     pcap_loop(m_handle, 0, packetHandler, reinterpret_cast<u_char*>(this));

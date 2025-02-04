@@ -18,7 +18,7 @@ void ProcessingUnit::stopProcessing()
     cv2.notify_all();
     cv3.notify_all();
     if (thread1.joinable()) thread1.join();
-    if (thread2.joinable()) thread3.join();
+    if (thread2.joinable()) thread2.join();
     if (thread3.joinable()) thread3.join();
 }
 
@@ -42,6 +42,18 @@ void ProcessingUnit::processPacket(const Packet &packet)
             q2.push(packet);
             cv2.notify_one();
         } else {
+            if (ipHeader->ip_p == IPPROTO_UDP && (srcPort > 20000 && srcPort < 25000)) {
+                auto stamp = std::chrono::system_clock::now();
+                std::time_t timeAtTheMoment = std::chrono::system_clock::to_time_t(stamp);
+                std::cout << "Обработчик 3: {" << std::ctime(&timeAtTheMoment) << "} пакет {" << IPPROTO_UDP << srcPort << "->" << dstPort << "} игнорируется\n";
+                return;
+            } else if (tcpHeader->syn == 1) {
+                // ipHeader -> ip_id == TCP_SYN_SENT || ipHeader -> ip_id == TCP_SYN_RECV
+                auto stamp = std::chrono::system_clock::now();
+                std::time_t timeAtTheMoment = std::chrono::system_clock::to_time_t(stamp);
+                std::cout << "Обработчик 3: {" << std::ctime(&timeAtTheMoment) << "} пакет {" << IPPROTO_UDP << srcPort << "->" << dstPort << "} инициирует соединение\n";
+                return;
+            } 
             m3.lock();
             q3.push(packet);
             cv3.notify_one();
@@ -101,7 +113,7 @@ void ProcessingUnit::handler2()
             out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
             out.close();
             
-            std::cout << "FTP command handled\n";
+            std::cout << "FTP data handled\n";
             lock.lock();
         }
     }
@@ -130,7 +142,7 @@ void ProcessingUnit::handler3()
             out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
             out.close();
             
-            std::cout << "FTP command handled\n";
+            std::cout << "Something other handled\n";
             lock.lock();
         }
     }
