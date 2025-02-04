@@ -17,9 +17,12 @@ void ProcessingUnit::stopProcessing()
     cv1.notify_all();
     cv2.notify_all();
     cv3.notify_all();
-    if (thread1.joinable()) thread1.join();
-    if (thread2.joinable()) thread2.join();
-    if (thread3.joinable()) thread3.join();
+    if (thread1.joinable()) 
+        thread1.join();
+    if (thread2.joinable()) 
+        thread2.join();
+    if (thread3.joinable()) 
+        thread3.join();
 }
 
 void ProcessingUnit::processPacket(const Packet &packet)
@@ -34,12 +37,16 @@ void ProcessingUnit::processPacket(const Packet &packet)
         uint16_t dstPort = ntohs(tcpHeader->th_dport);
 
         if (srcPort == 21 || dstPort == 21) {
-            m1.lock();
-            q1.push(packet);
+            {
+                std::lock_guard<std::mutex> lock(m1);
+                q1.push(packet);
+            }
             cv1.notify_one();
         } else if (srcPort == 20 || dstPort == 20 || srcPort > 1023 || dstPort > 1023) {
-            m2.lock();
-            q2.push(packet);
+            {
+                std::lock_guard<std::mutex> lock(m2);
+                q2.push(packet);
+            }
             cv2.notify_one();
         } else {
             if (ipHeader->ip_p == IPPROTO_UDP && (srcPort > 20000 && srcPort < 25000)) {
@@ -54,8 +61,10 @@ void ProcessingUnit::processPacket(const Packet &packet)
                 std::cout << "Обработчик 3: {" << std::ctime(&timeAtTheMoment) << "} пакет {" << IPPROTO_UDP << srcPort << "->" << dstPort << "} инициирует соединение\n";
                 return;
             } 
-            m3.lock();
-            q3.push(packet);
+            {
+                std::lock_guard<std::mutex> lock(m3);
+                q3.push(packet);
+            }
             cv3.notify_one();
         }
     }
@@ -65,7 +74,6 @@ void ProcessingUnit::handler1()
 {
     static const std::string filename = "ftp.pcap";
     std::ofstream out(filename, std::ios::binary | std::ios::app);
-
     if (!out) {
         std::cerr << "Unable to open file for writing packet data\n";
         return;
@@ -77,17 +85,18 @@ void ProcessingUnit::handler1()
             return !q1.empty() || isRunning;
         });
         while (!q1.empty()) {
+            std::cout << "hello from handler1";
             Packet pkt = q1.front();
             q1.pop();
             lock.unlock();
             out.write(reinterpret_cast<const char *>(&pkt.header), sizeof(pkt.header));
             out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
-            out.close();
 
             std::cout << "FTP command handled\n";
             lock.lock();
         }
     }
+    out.close();
 }
 
 void ProcessingUnit::handler2()
@@ -106,17 +115,18 @@ void ProcessingUnit::handler2()
             return !q2.empty() || isRunning;
         });
         while (!q2.empty()) {
+            std::cout << "hello from handler2";
             Packet pkt = q2.front();
             q2.pop();
             lock.unlock();
             out.write(reinterpret_cast<const char *>(&pkt.header), sizeof(pkt.header));
             out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
-            out.close();
             
             std::cout << "FTP data handled\n";
             lock.lock();
         }
     }
+    out.close();
 }
 
 void ProcessingUnit::handler3()
@@ -135,17 +145,18 @@ void ProcessingUnit::handler3()
             return !q3.empty() || isRunning;
         });
         while (!q3.empty()) {
+            std::cout << "hello from handler3";
             Packet pkt = q3.front();
             q3.pop();
             lock.unlock();
             out.write(reinterpret_cast<const char *>(&pkt.header), sizeof(pkt.header));
             out.write(reinterpret_cast<const char *>(pkt.data.data()), sizeof(pkt.data.size()));
-            out.close();
             
-            std::cout << "Something other handled\n";
+            std::cout <<"Something other handled\n";
             lock.lock();
         }
     }
+    out.close();
 }
 
 } //namespace sniffer

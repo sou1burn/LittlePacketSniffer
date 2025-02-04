@@ -27,12 +27,11 @@ int main(int argc, char** argv) {
 
     sniffer::ProcessingUnit processor;
     sniffer::Sniffer sniffer(devs[0].name);
-
     processor.startProcessing();
     std::thread sniffingThread([&sniffer, &processor]() {
         sniffer.startSniffing();
     });
-
+    
     std::cout << "Press Enter to stop\n";
     std::cin.get();
 

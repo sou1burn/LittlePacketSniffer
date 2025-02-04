@@ -1,14 +1,5 @@
 #pragma once
 #include "sniffer.h"
-#include <queue>
-#include <condition_variable>
-#include <thread>
-#include <netinet/ip.h>
-#include <netinet/tcp.h>
-#include <netinet/udp.h>
-#include <arpa/inet.h>
-#include <ctime>
-#include <chrono>
 
 namespace sniffer
 {
@@ -30,7 +21,6 @@ private:
     std::queue<Packet> q1, q2, q3;    
     std::condition_variable cv1, cv2, cv3;
     std::mutex m1, m2, m3;
-
     bool isRunning = false;
 };
 

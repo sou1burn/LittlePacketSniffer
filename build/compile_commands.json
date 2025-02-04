@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/home/volodya/projects/infotecs_rd/build",
+  "command": "/usr/bin/g++ -I/home/volodya/projects/infotecs_rd/src/sniffer -I/home/volodya/projects/infotecs_rd/SNIFFER -I/home/volodya/projects/infotecs_rd/src/handlers -g -O0 -Wall -Wextra -Wpedantic -finput-charset=UTF-8 -fexec-charset=UTF-8 -std=gnu++17 -o CMakeFiles/SNIFFER.dir/src/sniffer/sniffer.cpp.o -c /home/volodya/projects/infotecs_rd/src/sniffer/sniffer.cpp",
+  "file": "/home/volodya/projects/infotecs_rd/src/sniffer/sniffer.cpp"
+},
+{
+  "directory": "/home/volodya/projects/infotecs_rd/build",
+  "command": "/usr/bin/g++ -I/home/volodya/projects/infotecs_rd/src/sniffer -I/home/volodya/projects/infotecs_rd/src/handlers -I/home/volodya/projects/infotecs_rd/HANDLERS -I/home/volodya/projects/infotecs_rd/SNIFFER -g -O0 -Wall -Wextra -Wpedantic -finput-charset=UTF-8 -fexec-charset=UTF-8 -std=gnu++17 -o CMakeFiles/HANDLERS.dir/src/handlers/handlers.cpp.o -c /home/volodya/projects/infotecs_rd/src/handlers/handlers.cpp",
+  "file": "/home/volodya/projects/infotecs_rd/src/handlers/handlers.cpp"
+},
+{
+  "directory": "/home/volodya/projects/infotecs_rd/build",
+  "command": "/usr/bin/g++ -I/home/volodya/projects/infotecs_rd/src/sniffer -I/home/volodya/projects/infotecs_rd/src/handlers -I/home/volodya/projects/infotecs_rd/HANDLERS -I/home/volodya/projects/infotecs_rd/SNIFFER -g -O0 -Wall -Wextra -Wpedantic -finput-charset=UTF-8 -fexec-charset=UTF-8 -std=gnu++17 -o CMakeFiles/main.dir/src/main.cpp.o -c /home/volodya/projects/infotecs_rd/src/main.cpp",
+  "file": "/home/volodya/projects/infotecs_rd/src/main.cpp"
+}
+]

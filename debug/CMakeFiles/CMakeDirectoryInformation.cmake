@@ -3,7 +3,7 @@
 
 # Relative path conversion top directories.
 set(CMAKE_RELATIVE_PATH_TOP_SOURCE "/home/volodya/projects/infotecs_rd")
-set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/volodya/projects/infotecs_rd/build")
+set(CMAKE_RELATIVE_PATH_TOP_BINARY "/home/volodya/projects/infotecs_rd/debug")
 
 # Force unix paths in dependencies.
 set(CMAKE_FORCE_UNIX_PATHS 1)
