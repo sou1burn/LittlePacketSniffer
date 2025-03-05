@@ -5,8 +5,6 @@ namespace sniffer
 
 Sniffer::Sniffer(const std::string &interface, ProcessingUnit &processor) : m_interface (interface), m_processor (processor) {}
 
-//Sniffer::Sniffer(const std::string &interface) : m_interface (interface) {}
-
 void Sniffer::startSniffing()
 {
     m_handle = pcap_open_live(m_interface.c_str(), BUFSIZ, 1, 1000, m_errbuf);

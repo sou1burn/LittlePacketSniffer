@@ -40,7 +40,8 @@ void ProcessingUnit::processPacket(const Packet &packet)
                 q1.push(packet);
             }
             cv1.notify_one();
-        } else if (srcPort == 20 || dstPort == 20 || srcPort > 1023 || dstPort > 1023) {
+        // todo: handle active and passive FTP mode
+        } else if (srcPort == 20 || dstPort == 20 /*|| srcPort > 1023 || dstPort > 1023*/) {
             {
                 std::lock_guard<std::mutex> lock(m2);
                 q2.push(packet);
@@ -53,7 +54,6 @@ void ProcessingUnit::processPacket(const Packet &packet)
                 std::cout << "Обработчик 3: {" << std::ctime(&timeAtTheMoment) << "} пакет {" << IPPROTO_UDP << srcPort << "->" << dstPort << "} игнорируется\n";
                 return;
             } else if (tcpHeader->syn == 1) {
-                // ipHeader -> ip_id == TCP_SYN_SENT || ipHeader -> ip_id == TCP_SYN_RECV
                 auto stamp = std::chrono::system_clock::now();
                 std::time_t timeAtTheMoment = std::chrono::system_clock::to_time_t(stamp);
                 std::cout << "Обработчик 3: {" << std::ctime(&timeAtTheMoment) << "} пакет {" << IPPROTO_UDP << srcPort << "->" << dstPort << "} инициирует соединение\n";
@@ -84,7 +84,6 @@ void ProcessingUnit::handler1()
             return !q1.empty() || !isRunning;
         });
         while (!q1.empty()) {
-           // std::cout << "hello from handler1\n";
             Packet pkt = q1.front();
             q1.pop();
             lock.unlock();
@@ -114,7 +113,6 @@ void ProcessingUnit::handler2()
             return !q2.empty() || !isRunning;
         });
         while (!q2.empty()) {
-           // std::cout << "hello from handler2\n";
             Packet pkt = q2.front();
             q2.pop();
             lock.unlock();
@@ -144,7 +142,6 @@ void ProcessingUnit::handler3()
             return !q3.empty() || !isRunning;
         });
         while (!q3.empty()) {
-           // std::cout << "hello from handler3\n";
             Packet pkt = q3.front();
             q3.pop();
             lock.unlock();

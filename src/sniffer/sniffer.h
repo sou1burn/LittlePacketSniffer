@@ -19,7 +19,6 @@
 
 namespace sniffer 
 {
-    //not sure about byte, might need to use u_char
 using byte = uint8_t;
 
 class ProcessingUnit;
